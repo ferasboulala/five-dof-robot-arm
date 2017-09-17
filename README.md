@@ -1,6 +1,6 @@
 # five_dof_robot_arm
 ROS implementation of the aluminium chinese built 5-6 DOF robot arm. My implementation has 5 DOF because the servos used were too weak to even support the arm itself.
-![img1](pictures/robot_arm.jpg?w=10)
+![img1](pictures/robot_arm.jpg?w=0.1)
 
 As for all my repositories so far, this is simply a way for me to document my projects in robotics. If you wish to replicate this robot arm, I suggest looking into Mastering ROS For Robotics Programming book. It doesn't explicitely tell you how to implement it with the arduino but you will have enough insight to do it yourself.
 
