@@ -28,3 +28,4 @@ As for all my repositories so far, this is simply a way for me to document my pr
   3. $ roscore
   4. $ roslaunch five_dof_arm five_dof_arm_control.launch
   5. $ rosrun rosserial_python serial_node.py /dev/ttyUSB'n' _ baud:= 115200
+  ![img2](pictures/rviz_moveit_gazebo.png)
