@@ -24,7 +24,7 @@ As for all my repositories so far, this is simply a way for me to document my pr
   6. Battery with voltage regulators depending on the servos you're using. Most likely 5V regulators and a 7.4V Lipo will do just fine.
   
 # C. Installation
-  1. Prepare all the hardware. Refer to the arduino code found in arduino_implementation.
+  1. Prepare all the hardware. Refer to the arduino code found in arduino_implementation. Make sure that all grounds are connected.
   2. Download all the software.
   3. $ roscore
   4. $ roslaunch five_dof_arm five_dof_arm_control.launch
