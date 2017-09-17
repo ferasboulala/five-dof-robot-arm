@@ -1,0 +1,62 @@
+digraph G {
+node [shape=box];
+"map" [label="map"];
+"base_link" [label="base_link"];
+"base_link_2" [label="base_link_2"];
+"servo_1_support_1" [label="servo_1_support_1"];
+"servo_1_support_3" [label="servo_1_support_3"];
+"servo_1" [label="servo_1"];
+"servo_1_2" [label="servo_1_2"];
+"servo_1_4" [label="servo_1_4"];
+"servo_2" [label="servo_2"];
+"bicep" [label="bicep"];
+"servo_3" [label="servo_3"];
+"servo_4_support_1" [label="servo_4_support_1"];
+"servo_4_support_3" [label="servo_4_support_3"];
+"servo_4" [label="servo_4"];
+"servo_4_2" [label="servo_4_2"];
+"servo_4_4" [label="servo_4_4"];
+"claw_palm" [label="claw_palm"];
+"claw_1" [label="claw_1"];
+"claw_2" [label="claw_2"];
+"grasping_frame" [label="grasping_frame"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"map" -> "bottom_joint" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"bottom_joint" -> "base_link"
+"base_link" -> "base_joint" [label="xyz: 0 -0.035 0.015 \nrpy: 0 -0 0"]
+"base_joint" -> "base_link_2"
+"base_link_2" -> "base_joint_2" [label="xyz: 0 0.015 0.035 \nrpy: 0 -0 0"]
+"base_joint_2" -> "servo_1_support_1"
+"servo_1_support_1" -> "servo_1_support_2" [label="xyz: 0 0 0.0075 \nrpy: 0 -0 0"]
+"servo_1_support_2" -> "servo_1_support_3"
+"servo_1_support_1" -> "servo_1_support_X" [label="xyz: 0 0.003 0.025 \nrpy: 0 -0 0"]
+"servo_1_support_X" -> "servo_1"
+"servo_1" -> "servo_1_1" [label="xyz: 0.01 0.01175 0.026 \nrpy: 0 -0 0"]
+"servo_1_1" -> "servo_1_2"
+"servo_1_2" -> "servo_1_3" [label="xyz: 0 0 0.0025 \nrpy: 0 -0 0"]
+"servo_1_3" -> "servo_1_4"
+"servo_1_4" -> "servo_2_1" [label="xyz: 0 0 0.005 \nrpy: 0 -0 0"]
+"servo_2_1" -> "servo_2"
+"servo_2" -> "servo_2_2" [label="xyz: -0.03 -0.01 0.01375 \nrpy: 0 -0 0"]
+"servo_2_2" -> "bicep"
+"bicep" -> "servo_3_1" [label="xyz: 0 0 0.1 \nrpy: 0 -0 0"]
+"servo_3_1" -> "servo_3"
+"servo_3" -> "useless_joint" [label="xyz: 0.03 -0.00325 0.0415 \nrpy: 0 -0 0"]
+"useless_joint" -> "servo_4_support_1"
+"servo_4_support_1" -> "servo_4_support_2" [label="xyz: -0.005 -0.011 0.0005 \nrpy: 0 -0 0"]
+"servo_4_support_2" -> "servo_4_support_3"
+"servo_4_support_1" -> "servo_4_support_X" [label="xyz: -0.005 -0.008 0.018 \nrpy: 0 -0 0"]
+"servo_4_support_X" -> "servo_4"
+"servo_4" -> "servo_4_1" [label="xyz: 0.01 0.01175 0.026 \nrpy: 0 -0 0"]
+"servo_4_1" -> "servo_4_2"
+"servo_4_2" -> "servo_4_3" [label="xyz: 0 0 0.0025 \nrpy: 0 -0 0"]
+"servo_4_3" -> "servo_4_4"
+"servo_4_4" -> "claw_to_wrist" [label="xyz: 0 0 0.0025 \nrpy: 0 -0 0"]
+"claw_to_wrist" -> "claw_palm"
+"claw_palm" -> "claw_joint_1" [label="xyz: 0.01 0 0.02 \nrpy: 0 -0 0"]
+"claw_joint_1" -> "claw_1"
+"claw_palm" -> "claw_joint_2" [label="xyz: -0.01 0 0.02 \nrpy: 0 -0 0"]
+"claw_joint_2" -> "claw_2"
+"claw_palm" -> "grasping_frame_joint" [label="xyz: 0 0 0.06 \nrpy: 0 -0 0"]
+"grasping_frame_joint" -> "grasping_frame"
+}

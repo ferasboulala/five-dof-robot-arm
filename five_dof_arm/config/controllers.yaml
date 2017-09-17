@@ -1,0 +1,11 @@
+controller_manager_ns: controller_manager
+controller_list:
+  - name: five_dof_arm/five_dof_arm_joint_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - servo_1_1
+      - servo_2_2
+      - servo_3_1
+      - servo_4_1

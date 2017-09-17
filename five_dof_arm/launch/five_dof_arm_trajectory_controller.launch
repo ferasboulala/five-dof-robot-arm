@@ -1,0 +1,6 @@
+<launch>
+	<rosparam file="$(find five_dof_arm)/config/trajectory_control.yaml" command="load"/>
+
+  <node name="five_dof_arm_controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/five_dof_arm" args="five_dof_arm_joint_controller"/>
+</launch>

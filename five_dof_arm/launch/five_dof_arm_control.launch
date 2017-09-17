@@ -1,0 +1,22 @@
+<launch>   
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+
+  <!-- ros_control five dof arm launch file -->
+  <include file="$(find five_dof_arm)/launch/five_dof_arm_gazebo_states.launch" />   
+
+  <!-- ros_control trajectory control dof arm launch file -->
+  <include file="$(find five_dof_arm)/launch/five_dof_arm_trajectory_controller.launch" />    
+
+  <!-- moveit launch file -->
+  <include file="$(find five_dof_arm)/launch/moveit_planning_execution.launch" />   
+
+  <!-- Launch Gazebo  -->
+  <include file="$(find five_dof_arm)/launch/five_dof_arm_world.launch" />
+
+  <!-- Launch the arduino_integration node -->
+  <include file="$(find arduino_integration)/launch/arduino_integration.launch" />
+
+  <!-- Launch the rosserial_node for connection to hardware through arduino -->
+  <!-- rosrun rosserial_arduino serial_node.py /dev/ttyUSBx _baud:=115200 -->
+</launch>

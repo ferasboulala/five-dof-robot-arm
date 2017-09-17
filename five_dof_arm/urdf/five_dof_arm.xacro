@@ -1,0 +1,561 @@
+<?xml version="1.0"?>
+
+<robot name="five_dof_arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <material name="Black">
+    <color rgba="0.0 0.0 0.0 1.0"/>
+  </material>
+
+  <material name="White">
+    <color rgba="1.0 1.0 1.0 1.0"/>
+  </material>
+
+  <material name="Blue">
+    <color rgba="0 0 1.0 0"/>
+  </material>
+
+  <material name="Green">
+    <color rgba="0 1.0 0 1.0"/>
+  </material>
+
+  <material name="Red">
+    <color rgba="1.0 0 0 0"/>
+  </material>
+
+  <property name="deg_to_rad" value="0.01745329251994329577" />
+  <property name="M_PI" value="3.14159"/>
+
+<!-- Macros (no use of the new feature letting you put more than one visual property to a link) -->
+
+  <xacro:macro name="inertial_matrix" params="mass">
+      <inertial>
+      	<mass value="${mass}" />
+        <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.5" iyz="0.0" izz="1.0" />
+      </inertial>
+   </xacro:macro>
+
+   <xacro:macro name="transmission_block" params="joint_name">
+	  <transmission name="tran1">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="${joint_name}">
+	      <hardwareInterface>PositionJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor1">
+	      <hardwareInterface>PositionJointInterface</hardwareInterface>
+	      <mechanicalReduction>1</mechanicalReduction>
+	    </actuator>
+	  </transmission>
+   </xacro:macro>
+  
+  <xacro:macro name="servo_motor" params="joint_name pX pY pZ rR pP yY">
+
+    <link name="${joint_name}_support_1">
+      <visual>
+        <origin xyz="${pX} ${pY} ${pZ}" rpy="${rR} ${pP} ${yY}"/>
+        <geometry>
+          <box size="0.0375 0.0020 0.035"/>
+        </geometry>
+        <material name="White"/>
+      </visual>
+    <xacro:inertial_matrix mass="1"/>
+    </link>
+
+    <joint name="${joint_name}_support_2" type="fixed">
+      <parent link="${joint_name}_support_1"/>
+      <child link="${joint_name}_support_3"/>
+      <origin xyz="${pX} ${pY-0.001} ${pZ-0.0175}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="${joint_name}_support_3">
+      <visual>
+        <origin xyz="0 0.015 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.0375 0.03 0.002"/>
+        </geometry>
+        <material name="White"/>
+      </visual>
+      <xacro:inertial_matrix mass="1"/>
+    </link>
+
+    <joint name="${joint_name}_support_X" type="fixed">
+      <parent link="${joint_name}_support_1"/>
+      <child link="${joint_name}"/>
+      <origin xyz="${pX} ${pY+0.002} ${pZ}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="${joint_name}">
+      <collision>
+        <origin xyz="0 0.01175 0.006"  rpy="0 0 0"/>
+        <geometry>
+          <box size="0.05 0.0335 0.055" />
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="0 0.01175 0.006" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.045 0.0235 0.04"/>
+        </geometry>
+        <material name="Black"/> 
+      </visual>
+      <xacro:inertial_matrix mass="1"/>
+    </link>
+
+  <gazebo reference="${joint_name}">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+    <joint name="${joint_name}_1" type="revolute">
+      <parent link="${joint_name}"/>
+      <child link="${joint_name}_2"/>
+      <origin xyz="0.01 0.01175 0.026" rpy="0 0 0"/>
+      <axis xyz="0 0 1" />
+      <limit effort="300" velocity="1" lower="0" upper="${M_PI}"/>
+      <dynamics damping="50" friction="1"/>
+    </joint>
+    <xacro:transmission_block joint_name="${joint_name}_1"/>
+
+    <link name="${joint_name}_2">
+      <visual>
+        <origin xyz="0 0 0.0025" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.005" radius="0.005"/> 
+        </geometry>
+        <material name="Black"/>
+      </visual>
+      <xacro:inertial_matrix mass="1"/>
+    </link>
+
+  <gazebo reference="${joint_name}_2">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+    <joint name="${joint_name}_3" type="fixed">
+      <parent link="${joint_name}_2"/>
+      <child link="${joint_name}_4"/>
+      <origin xyz="0 0 0.0025" rpy="0 0 0"/>
+    </joint>
+
+   <link name="${joint_name}_4">
+      <visual>
+        <origin xyz="0 0 0.0025" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.005" radius="0.01"/> 
+        </geometry>
+        <material name="Black"/>
+      </visual>
+      <xacro:inertial_matrix mass="1"/>
+    </link>
+
+  <gazebo reference="${joint_name}_4">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  </xacro:macro>
+  
+
+<!--/////////////////////////////////////////////////////////////////-->
+
+<!-- ALWAYS HAVE A BASE_LINK NAMED EXACTLY THIS WAY OR IT WON'T COMPILE THE TF -->
+
+  <joint name="bottom_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="map"/>
+    <child link="base_link"/>
+  </joint>
+
+  <link name="map">
+    <visual>
+      <origin xyz=" 0 0 -0.01"  rpy="0 0 0"/>
+      <geometry>
+        <box size="1 1 0.02" />
+      </geometry>
+      <material name="Black" />
+    </visual>
+    <collision>
+      <origin xyz=" 0 0 -0.01"  rpy="0 0 0"/>
+      <geometry>
+        <box size="1 1 0.02" />
+      </geometry>
+      </collision>
+  </link>
+
+  <gazebo reference="bottom_link">
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0.017" rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.1 0.03" />
+      </geometry>
+      <material name="White" />
+    </visual>
+    <xacro:inertial_matrix mass="1"/>
+    <collision>
+      <origin xyz="0 0 0.017"  rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.03" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_link_2"/>
+    <origin xyz="0 -0.035 0.015"/>
+  </joint>
+
+  <link name="base_link_2">
+    <visual>
+      <origin xyz="0 0 0.03" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.03 0.06"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <xacro:inertial_matrix mass="1"/>
+    <collision>
+      <origin xyz="0 0 0.03"  rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.03 0.06" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_joint_2" type="fixed">
+    <parent link="base_link_2"/>
+    <child link="servo_1_support_1"/>
+    <origin xyz="0 0.015 0.035"/>
+  </joint>
+
+  <xacro:servo_motor joint_name="servo_1" pX="0" pY="0.001" pZ="0.025" rR="0" pP="0" yY="0"/>
+
+<!-- From now on, we use more than one visual property per link up to a revolute joint -->
+
+  <joint name="servo_2_1" type="fixed">
+    <parent link="servo_1_4"/>
+    <child link="servo_2"/>
+    <origin xyz="0 0 0.005" rpy="0 0 0"/>
+  </joint>
+
+  <link name="servo_2">
+    <visual>
+      <origin xyz="0 0 0.001" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.045 0.0375 0.002"/>
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.0225 0 0.015" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.002 0.0375 0.03"/>
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="0 0 0.01375" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.045 0.0235"/>
+      </geometry>
+      <material name="Black"/> 
+    </visual>
+    <visual>
+      <origin xyz="-0.0225 -0.01 0.01375" rpy="0 ${M_PI/2} 0"/>
+      <geometry>
+        <cylinder length="0.005" radius="0.005"/> 
+      </geometry>
+      <material name="Black"/> 
+    </visual>
+    <visual>
+      <origin xyz="-0.0275 -0.01 0.01375" rpy="0 ${M_PI/2} 0"/>
+      <geometry>
+        <cylinder length="0.005" radius="0.01"/> 
+      </geometry>
+      <material name="Black"/> 
+    </visual>
+    <xacro:inertial_matrix mass="1"/>
+    <collision>
+      <origin xyz="-0.005 0 0.01375"  rpy="0 0 0"/>
+      <geometry>
+        <box size="0.055 0.055 0.0335" />
+      </geometry>
+     </collision>
+  </link>
+
+  <gazebo reference="servo_2">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <joint name="servo_2_2" type="revolute">
+    <parent link="servo_2"/>
+    <child link="bicep"/>
+    <origin xyz="-0.03 -0.01 0.01375" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+    <limit effort="300" velocity="1" lower="${-M_PI/2}" upper="${M_PI/2}"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+
+  <xacro:transmission_block joint_name="servo_2_2"/>
+
+  <link name="bicep">
+    <visual>
+      <origin xyz="-0.0015 0 0" rpy="0 ${M_PI/2} 0"/>
+      <geometry>
+        <cylinder length="0.003" radius="0.0125"/> 
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.0565 0 0" rpy="0 ${M_PI/2} 0"/>
+      <geometry>
+        <cylinder length="0.003" radius="0.0125"/> 
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="-0.0015 0 0.05" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.003 0.025 0.1"/>
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.0565 0 0.05" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.003 0.025 0.1"/>
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="-0.0015 0 0.1" rpy="0 ${M_PI/2} 0"/>
+      <geometry>
+        <cylinder length="0.003" radius="0.0125"/>
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.0565 0 0.1" rpy="0 ${M_PI/2} 0"/>
+      <geometry>
+        <cylinder length="0.003" radius="0.0125"/>
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <xacro:inertial_matrix mass="1"/>
+    <collision>
+      <origin xyz="0.0275 0 0.01375"  rpy="0 0 0"/>
+      <geometry>
+        <box size="0.063 0.03 0.14" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="servo_3_1" type="revolute">
+    <parent link="bicep"/>
+    <child link="servo_3"/>
+    <origin xyz="0 0 0.1" rpy="0 0 0"/>
+    <axis xyz="1 0 0" />
+    <limit effort="300" velocity="1" lower="${-M_PI/2}" upper="${M_PI/8}"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+
+  <xacro:transmission_block joint_name="servo_3_1"/>
+
+  <link name="servo_3">
+    <visual>
+      <origin xyz="0.03 0.01375 0.01" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.045 0.002 0.0375"/>
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.0525 -0.00125 0.012" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.002 0.03 0.0375"/>
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.03 0 0.01" rpy="${-M_PI/2} 0 0"/>
+      <geometry>
+        <box size="0.04 0.045 0.0235"/>
+      </geometry>
+      <material name="Black"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.0075 0 0" rpy="0 ${M_PI/2} 0"/>
+      <geometry>
+        <cylinder length="0.005" radius="0.005"/> 
+      </geometry>
+      <material name="Black"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.0025 0 0" rpy="0 ${M_PI/2} 0"/>
+      <geometry>
+        <cylinder length="0.005" radius="0.01"/> 
+      </geometry>
+      <material name="Black"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.03 0.01675 0.0125" rpy="${M_PI/2} 0 0"/>
+      <geometry>
+        <cylinder length="0.003" radius="0.01"/> 
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.03 0.01675 0.024" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.02 0.003 0.03"/>
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.03 0.00475 0.04" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.02 0.027 0.003"/>
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <visual>
+      <origin xyz="0.03 -0.00125 0.04" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.003" radius="0.01"/> 
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <xacro:inertial_matrix mass="1"/>
+    <collision>
+      <origin xyz="0.03 0 0.01"  rpy="0 0 0"/>
+      <geometry>
+        <box size="0.06 0.03 0.05" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="servo_3">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <joint name="useless_joint" type="fixed">
+    <parent link="servo_3"/>
+    <child link="servo_4_support_1"/>
+    <origin xyz="0.03 -0.00325 0.0415" rpy="0 0 0"/>
+  </joint>
+
+  <xacro:servo_motor joint_name="servo_4" pX="-0.005" pY="-0.01" pZ="0.018" rR="0" pP="0" yY="0"/>
+
+  <joint name="claw_to_wrist" type="fixed">
+    <parent link="servo_4_4"/>
+    <child link="claw_palm"/>
+    <origin xyz="0 0 0.0025" rpy="0 0 0"/>
+  </joint>
+
+  <link name="claw_palm">
+    <visual>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.02" radius="0.03"/>
+      </geometry>
+      <material name="White"/> 
+    </visual>
+    <xacro:inertial_matrix mass="1"/>
+    <collision>
+      <origin xyz="0 0 0.01"  rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.02" radius="0.03"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="claw_joint_1" type="revolute">
+    <parent link="claw_palm"/>
+    <child link="claw_1"/>
+    <origin xyz="0.01 0 0.01" rpy="0 0 0"/>
+    <axis xyz="0 -1 0" />
+    <limit effort="300" velocity="1" lower="0" upper="${M_PI/8}"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+
+<joint name="claw_joint_2" type="revolute">
+    <parent link="claw_palm"/>
+    <child link="claw_2"/>
+    <origin xyz="-0.01 0 0.01" rpy="0 0 0"/>
+    <axis xyz="0 1 0" />
+    <limit effort="300" velocity="1" lower="0" upper="${M_PI/8}"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+
+  <link name="claw_1">
+    <visual>
+      <origin xyz="0.0135 0 0.03" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.06" radius="0.003"/>
+      </geometry>
+      <material name="Black"/> 
+    </visual>
+    <xacro:inertial_matrix mass="1"/>
+    <collision>
+      <origin xyz="0.0135 0 0.02"  rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.04" radius="0.003"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="claw_1">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <link name="claw_2">
+    <visual>
+      <origin xyz="-0.0135 0 0.03" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.06" radius="0.003"/>
+      </geometry>
+      <material name="Black"/> 
+    </visual>
+    <xacro:inertial_matrix mass="1"/>
+    <collision>
+      <origin xyz="-0.0135 0 0.02"  rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.04" radius="0.003"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="claw_2">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/five_dof_arm</robotNamespace>
+    </plugin>
+  </gazebo>
+
+  <link name="grasping_frame">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.0001"/>
+      <cuboid_inertia mass="0.0001" x="0.001" y="0.001" z="0.001"/>
+      <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="100.0"  iyz="0.0"  izz="1.0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.01"/>
+      <geometry>
+        <box size="0.01 0.01 0.01" />
+      </geometry>
+      <material name="White" />
+    </visual>
+    </link>
+
+  <joint name="grasping_frame_joint" type="fixed">
+    <parent link="claw_palm"/>
+    <child link="grasping_frame"/>
+    <origin xyz="0 0 0.06" rpy="0 0 0"/>
+  </joint>
+
+</robot>

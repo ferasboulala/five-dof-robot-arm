@@ -1,0 +1,16 @@
+five_dof_arm:
+  five_dof_arm_joint_controller:
+    type: "position_controllers/JointTrajectoryController"
+    joints:
+      - servo_1_1
+      - servo_2_2
+      - servo_3_1
+      - servo_4_1
+
+    gains:
+      servo_1_1:   {p: 1000.0, i: 0.0, d: 0.1, i_clamp: 0.0}
+      servo_2_2: {p: 1000.0, i: 0.0, d: 0.1, i_clamp: 0.0}
+      servo_3_1:  {p: 1000.0, i: 0.0, d: 0.1, i_clamp: 0.0}
+      servo_4_1:       {p: 1000.0, i: 0.0, d: 0.1, i_clamp: 0.0}
+
+

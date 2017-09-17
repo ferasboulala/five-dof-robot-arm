@@ -1,0 +1,5 @@
+<launch>
+
+  <node name="arduino_integration" pkg="arduino_integration" type="arduino_node" respawn="true" />
+
+</launch>
