@@ -1,7 +1,7 @@
 # five_dof_robot_arm
 ROS implementation of the aluminium chinese built 5-6 DOF robot arm. My implementation has 5 DOF because the servos used were too weak to even support the arm itself.
 
-As for all my repositories so far, this is simply a way for me to document my projects in robotics. If you wish to replicate this robot arm, I suggest looking into Mastering ROS For Robotics Programming book. It doesn't explicitely tell you how to implement it with the arduino but you will have enough insight to do it yourself.
+As for all my repositories so far, this is simply a way for me to document my projects in robotics. If you wish to replicate this robot arm, I suggest looking into Mastering ROS For Robotics Programming book. It doesn't explicitely tell you how to implement it with the arduino but you will have enough insight to do it yourself. You can contact me at ferasboulala@gmail.com if you have any questions.
 
 - This robot can follow a trajectory dictated by MotionPlanning (MoveIt!). 
 - You can also use sliders or joysticks to control it manually. If the switch's on, joystick control is enabled. Otherwise, slider/software control is enabled.
